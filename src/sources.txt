@@ -1,0 +1,6 @@
+C:\Users\Dias\Desktop\eclipse\workspace\RFIDDynamic\src\br\edu\fatecbauru\Main.java
+C:\Users\Dias\Desktop\eclipse\workspace\RFIDDynamic\src\br\edu\fatecbauru\controllers\RFID.java
+C:\Users\Dias\Desktop\eclipse\workspace\RFIDDynamic\src\br\edu\fatecbauru\controllers\bridge\MasterRDImpl.java
+C:\Users\Dias\Desktop\eclipse\workspace\RFIDDynamic\src\br\edu\fatecbauru\controllers\util\InfoUtils.java
+C:\Users\Dias\Desktop\eclipse\workspace\RFIDDynamic\src\br\edu\fatecbauru\controllers\util\Resources.java
+C:\Users\Dias\Desktop\eclipse\workspace\RFIDDynamic\src\br\edu\fatecbauru\views\MainMenu.java
