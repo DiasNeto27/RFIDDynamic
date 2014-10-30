@@ -7,6 +7,9 @@ import java.util.Map;
 
 import javax.crypto.spec.GCMParameterSpec;
 
+import br.edu.fatecbauru.controllers.util.InfoUtils;
+import br.edu.fatecbauru.controllers.util.Resources;
+
 /**
  * Esta classe é onde é armazenado o cadastro definido pelo usuário, ela segue o
  * pattern Singleton
@@ -112,11 +115,7 @@ public class Cadastro {
 	}
 	
 	public void lerDadosRFID(RFID rfid){
-		try {
-			System.out.println(rfid.conectar());
-		} catch (Exception e) {		
-			e.printStackTrace();
-		}
+	
 		
 		System.out.println();
 		for (Campo campo: this.campos){
@@ -125,6 +124,7 @@ public class Cadastro {
 			//lendo o que foi escrito
 			String dado = rfid.lerInformacao(campo.getBloco());
 			System.out.println(campo.getNome() + ": " + dado);
+			
 		}
 	}
 	
@@ -136,14 +136,19 @@ public class Cadastro {
 			e.printStackTrace();
 		}
 	    
-	    
+	    rfid.redefineVariaveis();
+	       System.out.println("Request " + rfid.request());
+		    System.out.println("Anticoll: " + rfid.antiCollision());
+		    System.out.println("Select: " + rfid.selecionar()); 
 	    for (Campo campo: this.campos){
 	       //gera o bloco que ele será gravado
 	       int bloco = rfid.nextBlock();
 	       campo.setBloco(bloco);
+	     
 	       int result = rfid.gravarInformacao(campo.getValor().toString(), campo.getBloco());
+	   
 	       if (result != 0){
-	    	   System.err.println("Erro ao tentar gravar dados "+ result);
+	    	   System.err.println("Erro ao tentar gravar dados "+ InfoUtils.getErrorMessage(result));
 	       }
 	    }
 	  

@@ -124,7 +124,18 @@ public class MainMenu {
 	}
 	
 	public void lerDados(){
+		try {
+			System.out.println(rfid.conectar());
+		} catch (Exception e) {		
+			e.printStackTrace();
+		}
+		rfid.redefineVariaveis();
+		System.out.println("Request " + rfid.request());
+	    System.out.println("Anticoll: " + rfid.antiCollision());
+	    System.out.println("Select: " + rfid.selecionar());
 	   Cadastro.getInstance().lerDadosRFID(rfid);
+	   System.out.println("Finalizado");
+	   System.exit(0);
 	}
 	
 	/** Imprime na tela os nomes dos colaboradores deste projeto */
