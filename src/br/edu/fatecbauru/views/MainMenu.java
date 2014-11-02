@@ -55,12 +55,14 @@ public class MainMenu {
 	RFID rfid = new RFID();
 
 	/** conecta ao RFID */
-	public void conectar() {
+	public boolean conectar() {
 		try {
 			int porta = rfid.conectar();
 			System.out.println("Conectado na porta : " + porta);
+			return true;
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
+			return false;
 		}
 	}
 
@@ -69,21 +71,22 @@ public class MainMenu {
 	 * Define o cadastro a ser enviado para o RFID
 	 */
 	public void definirCadastro() {
-
-		if (Cadastro.getInstance().getQtdCampos() > 0) {
-			while (true) { //controla a validação da opção
-				System.out.println("Já há campos definidos, deseja redefinir o cadastro? " + Resources.getOpcoesFormatadas());
-				String opcao = userInput.next(); userInput.nextLine();
-				if (opcao.toUpperCase().charAt(0) == Resources.OPCAO_SIM) {
-					Cadastro.getInstance().redefinir();
-					System.out.println("Cadastro redefinido.");
-					break;
-				} else if (opcao.toUpperCase().charAt(0) == Resources.OPCAO_NAO) {
-					return;
-				}
-			}
-		}
+			Cadastro.getInstance().redefinir();
+//		if (Cadastro.getInstance().getQtdCampos() > 0) {
+//			while (true) { //controla a validação da opção
+//				System.out.println("Já há campos definidos, deseja redefinir o cadastro? " + Resources.getOpcoesFormatadas());
+//				String opcao = userInput.next(); userInput.nextLine();
+//				if (opcao.toUpperCase().charAt(0) == Resources.OPCAO_SIM) {
+//					Cadastro.getInstance().redefinir();
+//					System.out.println("Cadastro redefinido.");
+//					break;
+//				} else if (opcao.toUpperCase().charAt(0) == Resources.OPCAO_NAO) {
+//					return;
+//				}
+//			}
+//		}
 		
+	    int campos = 2;
 		while (true) { //controla o numero de campos que serão cadastros pelo usuário
 			Resources.clearScreen();
 			System.out.println("Digite o nome do campo: ");
@@ -94,10 +97,9 @@ public class MainMenu {
 			}
 
 			Cadastro.getInstance().addCampo(nomeCampo);
+			campos--;
 			
-			System.out.println("Deseja cadastrar um novo campo? " + Resources.getOpcoesFormatadas());
-			String opcao = userInput.next(); userInput.nextLine();
-			if (opcao.toUpperCase().charAt(0) != Resources.OPCAO_SIM){
+			if (campos == 0){
 				break;
 			}
 
@@ -147,35 +149,45 @@ public class MainMenu {
 
 	public MainMenu() {
 		int value = 0;
-
-		do {
+//
+//		do {
 			System.out.println(".:::. " + InfoUtils.getProjectName() + " versão: " + InfoUtils.getVersion() + ".:::.");
-			printMenu();
-			System.out.println("Digite a opção: ");
-			value = userInput.nextInt();
-			userInput.nextLine();
-			switch (value) {
-			case MENU_CONECTAR:
-				conectar();
-				break;
-			case MENU_DEFINIR_CADASTRO:
-			    definirCadastro();
-				break;
-			case MENU_CADASTRAR:
-				cadastrar();
-				break;
-			case MENU_LER_DADOS:
-				lerDados();
-				break;
-			case MENU_SOBRE:
-				break;
-			case MENU_SAIR:
-				break;
-			default:
-				break;
-			}
+			System.out.println("Nosso teste de integração deverá gravar dois campos dinâmicos no RFID que escolhermos e mostra-lo na tela. Seguiremos os passos: ");
+			System.out.println("Passo 1: Vamos testar a conexão com o cartão");
+			conectar();
+			System.out.println("Passo 2: Agora que esta conectando, vamos definir dois campos para gravar no RFID");
+			definirCadastro();	
+			System.out.println("Passo 3: Agora que o cadastro foi definido vamos grava-lo no RFID");
+			cadastrar();
+			System.out.println("Passo 4: Agora vamos ler");
+			lerDados();
+			
+//			printMenu();
+//			System.out.println("Digite a opção: ");
+//			value = userInput.nextInt();
+//			userInput.nextLine();
+//			switch (value) {
+//			case MENU_CONECTAR:
+//				conectar();
+//				break;
+//			case MENU_DEFINIR_CADASTRO:
+//			    definirCadastro();
+//				break;
+//			case MENU_CADASTRAR:
+//				cadastrar();
+//				break;
+//			case MENU_LER_DADOS:
+//				lerDados();
+//				break;
+//			case MENU_SOBRE:
+//				break;
+//			case MENU_SAIR:
+//				break;
+//			default:
+//				break;
+//			}
 
-		} while (value != MENU_SAIR);
+//		} while (value != MENU_SAIR);
 
 	}
 }

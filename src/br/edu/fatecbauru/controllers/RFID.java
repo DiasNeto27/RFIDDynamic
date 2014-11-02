@@ -24,7 +24,7 @@ public class RFID {
 	String hexStr = "";
 	byte[] pData = new byte[100];
 	//bloco atual
-	int current_block = 60;
+	int current_block = 20;
 	
 	public RFID(){
 		String path = System.getProperty("user.dir");		
@@ -108,8 +108,9 @@ public class RFID {
 		pSnr = new char[200];
 		plen = new byte[]{0};
 		pSize=new byte[]{0};
-		current_block = 60;
+		current_block = 20;
 		pData = new byte[100];
+		
 	}
 	public int autenticar(int bloco){
 	
