@@ -14,7 +14,7 @@ import br.edu.fatecbauru.controllers.util.InfoUtils;
 import com.sun.jna.Native;
 
 public class RFID {
-
+	private final int BLOCK = 0;
 	private MasterRDImpl dll = null;
 	private short icdev = 0x0000;
 	private int[] pTagType = new int[]{0};
@@ -24,7 +24,7 @@ public class RFID {
 	String hexStr = "";
 	byte[] pData = new byte[100];
 	//bloco atual
-	int current_block = 20;
+	int current_block = BLOCK;
 	
 	public RFID(){
 		String path = System.getProperty("user.dir");		
@@ -108,7 +108,7 @@ public class RFID {
 		pSnr = new char[200];
 		plen = new byte[]{0};
 		pSize=new byte[]{0};
-		current_block = 20;
+		current_block = BLOCK;
 		pData = new byte[100];
 		
 	}
