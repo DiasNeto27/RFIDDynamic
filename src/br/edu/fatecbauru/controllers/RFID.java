@@ -5,18 +5,20 @@ import java.util.Scanner;
 
 
 
+
 import br.edu.fatecbauru.controllers.bridge.MasterRDImpl;
 import br.edu.fatecbauru.controllers.util.InfoUtils;
 
 
 
 
+
 import com.sun.jna.Native;
 
-public class RFID {
-	private final int BLOCK = 0;
+public class RFID {	
+	public static final int MAX_CAMPOS = 47;
 	private MasterRDImpl dll = null;
-	private short icdev = 0x0000;
+	private short icdev = 0x0000; //corresponde ao device ID, por default deve ser 0
 	private int[] pTagType = new int[]{0};
 	private char[] pSnr = new char[200];
 	private byte[] plen = new byte[]{0};
@@ -24,8 +26,11 @@ public class RFID {
 	String hexStr = "";
 	byte[] pData = new byte[100];
 	//bloco atual
-	int current_block = BLOCK;
+	int blocoAtual= 1;
 	
+	/**
+	 *  Este construtor faz a inclusão do caminho da DLL no library path do Java e a carrega em memória
+	 */
 	public RFID(){
 		String path = System.getProperty("user.dir");		
 		System.out.println(path);
@@ -35,25 +40,41 @@ public class RFID {
 		dll = (MasterRDImpl) Native.loadLibrary("MasterRD", MasterRDImpl.class);
 	}
 	
-	public int nextBlock(){
-		return current_block++;
+	/**
+	 * Este método retorna o próximo bloco disponível
+	 * @return Retorna o número referente ao bloco disponivel
+	 */
+	public int getBlocoDisponivel(){
+		while(isBlocoChave(++blocoAtual));		
+		return blocoAtual;
 	}
 	
 
+	/**
+	 * Este método verifica se o {@code bloco} não é um bloco onde armazena-se a chave do setor
+	 * a fórmula para saber qual é o bloco chave do setor em cartões s50 se dá pela equação x=s*4+3
+	 * onde <i>s</i> é o setor e <i>x</i> o bloco encontrado.
+	 * Para sabermos de qual setor é o {@code bloco} é só dividirmos o número do bloco por 4
+	 * já que cada setor tem 4 blocos. 
+	 * @param bloco O número que identifica o bloco
+	 * @return {@code true} se {@code bloco} for chave do setor, caso contrário, retorna {@code false}
+	 */
+	public boolean isBlocoChave(int bloco){
+		int setor = bloco / 4;		 
+		return (setor * 4 + 3) == bloco; 
+	}
+
 	
 	/**
-	 * Conecta-se ao RFID pela por disponível 
+	 * Este método tenta fazer a conexão com o equipamento RFID testando as portas de 1 a 9 
 	 * os <i>bauds</i> existentes são:
 	 * <i>9600</i>
 	 *  <i>19200</i>
 	 *  <i>57600</i>
 	 *  <i>115200</i> - indicado conexões USB (default)
-	 * @return retorna a porta no qual foi conectado, caso contrário retornará -1
+	 * @return retorna a porta no qual foi conectado o equipamento, caso contrário retornará -1
 	 */
-	public int conectar() throws Exception {	
-		System.out.println("Coloque o cartão proximo do leitor e pressione [ENTER] para continuar");
-		Scanner s = new Scanner(System.in);
-		s.nextLine();
+	public int conectar() throws Exception {			
 		int baud = 115200; //default
 		int conStatus = -1;
 		int port = 1;
@@ -72,16 +93,18 @@ public class RFID {
 		}		    			
 	}
 	
-	public int request(){
-		
-		byte model = 0x52;
-		System.out.println("rf_request: icdev= " + icdev + ", model= " + model + ", ptagType=" + Arrays.toString(pTagType));
+	/**
+	 * Este método fará uma requisição inicial ao cartão
+	 * 
+	 * @return
+	 */
+	public int request(){		
+		byte model = 0x52;		
 		return dll.rf_request(icdev, model, pTagType);
 		
 	}
 	
-	public int antiCollision(){
-		System.out.println("rf_anticoll: icdev=" + icdev + ", bcnt=" + 4 + ", pSnr= " + Arrays.toString(pSnr) + ", plen=" + Arrays.toString(plen));
+	public int antiCollision(){		
 		int result = dll.rf_anticoll(icdev, (char) 4, pSnr, plen);
 		//serial
 		String serial= "";
@@ -96,10 +119,8 @@ public class RFID {
 	 * O cartão vai ficar no estado de ativo depois de receber este comando
 	 * @return retorna o resultado 0 se tiver êxito caso contrário retornará diferente de 0
 	 */
-	public int selecionar(){
-		System.out.println("rf_select: icdev=" + icdev + ", pSnr=" + Arrays.toString(pSnr) + ", snrLen=" + 4 + ", pSize=" +  Arrays.toString(plen));
-		int retorno = dll.rf_select(icdev, pSnr, (byte) 4, plen);
-		System.out.println(Arrays.toString(plen));
+	public int selecionar(){		
+		int retorno = dll.rf_select(icdev, pSnr, (byte) 4, plen);		
 		return retorno;
 	}
 	
@@ -108,33 +129,39 @@ public class RFID {
 		pSnr = new char[200];
 		plen = new byte[]{0};
 		pSize=new byte[]{0};
-		current_block = BLOCK;
+		blocoAtual = 1;
 		pData = new byte[100];
 		
 	}
+	
+	
+	public boolean verificaCartao(){
+		System.out.println("Coloque o cartão proximo do leitor e pressione [ENTER] para continuar");
+		Scanner s = new Scanner(System.in);		
+		s.nextLine();
+		request();		
+		antiCollision();
+		int result  = selecionar();
+		if (result == 0){
+			System.out.println("Cartão detectado com êxito");
+			return true;
+		}else{
+			System.out.println("Não conseguiu identificar o cartão");
+			return false;
+		}
+	
+	}
+	
 	public int autenticar(int bloco){
 	
 		byte model = 0x60; //Key A
-		byte pKeyn = (byte)0xFF;
-//		byte pKeyn2 = (byte)0xEE;
-		byte[] pKey = new byte[]{(byte)255,(byte)255,(byte)255,(byte)255,(byte)255,(byte)255};
-//		byte[] pKey = new byte[]{51, 48, 48, 48, 48, 48, 48};
-		
-		System.out.println("rf_m1_authentication2: icdev=" + icdev + ", model=" + model + ", bloco=" + bloco + ", pKey=" + Arrays.toString(pKey));
+		byte[] pKey = new byte[]{(byte)255,(byte)255,(byte)255,(byte)255,(byte)255,(byte)255};			
 	    return dll.rf_M1_authentication2(icdev, (char) model, (byte) bloco, pKey);
 	}
 	
 	public String lerInformacao(int bloco){
-//		request();
-//		antiCollision();
-//		selecionar();
+
 		
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {			
-			e.printStackTrace();
-		}
 	
 		
 		//antes devo autenticar
@@ -161,45 +188,27 @@ public class RFID {
 	public int gravarInformacao(String valor, int bloco){
 		
 
-//		request();
-//		antiCollision();
-//		selecionar();
 		
 		if (valor.length() > 16){
 			System.out.println("Texto excedeu 16 bytes: " + valor);
 		}
 		
-//		String hexStr = "";
-		hexStr = "";
+
 		
-		for (int i=0; i < 16; i++){
-			if (i < valor.length()){
-			pData[i] = ((byte) valor.charAt(i));
-			}else{
+		for (int i = 0; i < 16; i++) {
+			if (i < valor.length()) {
+				pData[i] = ((byte) valor.charAt(i));
+			} else {
 				pData[i] = ((byte) 0);
 			}
-//			hexStr += Integer.toHexString((int) valor.charAt(i));
+
 		}
-//		
-//		for (int i=0; i < (16 - valor.length()); i++){
-//			hexStr += "00";
-//		}
 		
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {			
-			e.printStackTrace();
-		}
 	
 		//antes devo autenticar
 		System.out.println("Auth: " + autenticar(bloco)); 
 		
 		//escrevendo a string no cartão
-		System.out.println("rf_m1_write: icdev=" + icdev + ", bloco=" + bloco + ", valor=" + Arrays.toString(pData));
-		
-		
-		
 		return dll.rf_M1_write(icdev, (byte) bloco, pData);
 	
 	}

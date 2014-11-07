@@ -130,19 +130,17 @@ public class Cadastro {
 	
 
 	public boolean persistirDadosRFID(RFID rfid) {
-	    try {
-			System.out.println(rfid.conectar());
-		} catch (Exception e) {		
-			e.printStackTrace();
-		}
-	    
+//	    try {
+//			System.out.println(rfid.conectar());
+//		} catch (Exception e) {		
+//			e.printStackTrace();
+//		}
+//	    
 	    rfid.redefineVariaveis();
-	       System.out.println("Request " + rfid.request());
-		    System.out.println("Anticoll: " + rfid.antiCollision());
-		    System.out.println("Select: " + rfid.selecionar()); 
+	       rfid.verificaCartao();
 	    for (Campo campo: this.campos){
 	       //gera o bloco que ele será gravado
-	       int bloco = rfid.nextBlock();
+	       int bloco = rfid.getBlocoDisponivel();
 	       campo.setBloco(bloco);
 	     
 	       int result = rfid.gravarInformacao(campo.getValor().toString(), campo.getBloco());
