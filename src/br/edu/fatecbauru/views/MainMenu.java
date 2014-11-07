@@ -139,7 +139,10 @@ public class MainMenu {
 			System.out.println(".:::. " + InfoUtils.getProjectName() + " versão: " + InfoUtils.getVersion() + ".:::.");
 			System.out.println("Nosso teste de integração deverá gravar campos dinâmicos no RFID que escolhermos e mostra-lo na tela. Seguiremos os passos: ");
 			System.out.println("Passo 1: Vamos testar a conexão com o equipamento");
-			conectar();
+			if (!conectar()){
+				System.err.println("Falha ao tentar conectar com o equipamento");
+				return;
+			}
 			System.out.println("Passo 2: Agora vamos definir os campos que desejamos salvar no cartão");
 			definirCadastro();	
 			System.out.println("Passo 3: Preencha os dados conforme é pedido");
