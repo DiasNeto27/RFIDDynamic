@@ -19,6 +19,11 @@ public class InfoUtils {
 	private static String authors[] = {"José Dias Neto", "Juliane Oliveira", "Felipe da Cunha", "Juliano Torres"};
 	/** Inicializa o nome de cada coordenador do projeto*/
 	private static String coordinators[] = {"Gustavo Bruschi", "Luiz Alexandre"};
+	
+	public final static int LED_OFF = 0;
+	public final static int LED_AZUL = 1;
+	public final static int LED_VERMELHO = 2;
+	
 		
 	/** Inicializa um {@code TreeMap} contendo o vínculo entre os códigos de erros e a sua
 	 * representação de forma escrita */

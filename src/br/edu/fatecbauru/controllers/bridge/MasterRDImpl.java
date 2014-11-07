@@ -25,5 +25,10 @@ public interface MasterRDImpl extends Library {
    public int rf_M1_write(short icdev,byte block,byte pData[]);
    
    public int rf_M1_read(short icdev, byte block,byte[] pData,byte[] dataLen);
+   
+   public int rf_light(short icdev, byte color);
+   
+   public int rf_beep(short icdev, byte msec);
+   
 }
  

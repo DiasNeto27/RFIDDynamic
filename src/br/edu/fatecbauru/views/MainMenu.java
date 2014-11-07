@@ -120,16 +120,12 @@ public class MainMenu {
 	}
 	
 	public void lerDados(){
-		try {
-			System.out.println(rfid.conectar());
-		} catch (Exception e) {		
-			e.printStackTrace();
-		}
+	
 		rfid.redefineVariaveis();
 		rfid.verificaCartao();
 	   Cadastro.getInstance().lerDadosRFID(rfid);
-	   System.out.println("Finalizado");
-	   System.exit(0);
+	   rfid.beep(30);
+	   
 	}
 	
 	/** Imprime na tela os nomes dos colaboradores deste projeto */
@@ -140,9 +136,6 @@ public class MainMenu {
 	}
 
 	public MainMenu() {
-		int value = 0;
-//
-//		do {
 			System.out.println(".:::. " + InfoUtils.getProjectName() + " versão: " + InfoUtils.getVersion() + ".:::.");
 			System.out.println("Nosso teste de integração deverá gravar campos dinâmicos no RFID que escolhermos e mostra-lo na tela. Seguiremos os passos: ");
 			System.out.println("Passo 1: Vamos testar a conexão com o equipamento");
@@ -152,8 +145,12 @@ public class MainMenu {
 			System.out.println("Passo 3: Preencha os dados conforme é pedido");
 			cadastrar();
 			System.out.println("Passo 4: Agora que salvamos no cartão, vamos ler o contéudo e mostra-lo");
-			lerDados();
+			lerDados();			
+			System.out.println("---------------------------------");
+			System.out.println("Teste de integração finalizado");					
+			sobre();
 			
+			System.exit(0);
 
 	}
 }

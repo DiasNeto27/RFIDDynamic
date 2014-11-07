@@ -11,6 +11,8 @@ public class Resources {
 
 	public final static char OPCAO_SIM = 'S';
 	public final static char OPCAO_NAO = 'N';
+	
+	
 
 	/**
 	 * Limpa o console de acordo com o sistema operacional utilizado

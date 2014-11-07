@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import br.edu.fatecbauru.controllers.bridge.MasterRDImpl;
 import br.edu.fatecbauru.controllers.util.InfoUtils;
+import br.edu.fatecbauru.controllers.util.Resources;
 
 
 
@@ -134,22 +135,34 @@ public class RFID {
 		
 	}
 	
+	public int mudarLed(int cor){
+		return dll.rf_light(icdev, (byte) cor);
+	}
 	
-	public boolean verificaCartao(){
-		System.out.println("Coloque o cartão proximo do leitor e pressione [ENTER] para continuar");
+	public int beep(int mili){
+		return dll.rf_beep(icdev,(byte)  mili);
+	}
+	
+	public boolean verificaCartao(){		
+		mudarLed(InfoUtils.LED_VERMELHO);	
+		beep(30);
+		System.out.println("Coloque o cartão proximo do leitor e pressione [ENTER] para continuar");		
 		Scanner s = new Scanner(System.in);		
 		s.nextLine();
+		
 		request();		
-		antiCollision();
-		int result  = selecionar();
+		antiCollision();		
+		int result  = selecionar();		
+		mudarLed(InfoUtils.LED_AZUL);
 		if (result == 0){
+			
 			System.out.println("Cartão detectado com êxito");
 			return true;
 		}else{
 			System.out.println("Não conseguiu identificar o cartão");
 			return false;
 		}
-	
+		
 	}
 	
 	public int autenticar(int bloco){
@@ -165,7 +178,11 @@ public class RFID {
 	
 		
 		//antes devo autenticar
-		System.out.println("Auth: " +  autenticar(bloco));
+		int result = autenticar(bloco);
+		if (result != 0){
+			System.err.println("Problema na autenticação: " + InfoUtils.getErrorMessage(result));
+			return "Bloco " + bloco + " não autenticado";
+		}
 		
 		
 		byte[] pData = new byte[100];
@@ -206,7 +223,12 @@ public class RFID {
 		
 	
 		//antes devo autenticar
-		System.out.println("Auth: " + autenticar(bloco)); 
+		int result = autenticar(bloco); 
+		if (result != 0){
+			System.err.println("Problema na autenticação: " + InfoUtils.getErrorMessage(result));
+			return result;
+		}
+		
 		
 		//escrevendo a string no cartão
 		return dll.rf_M1_write(icdev, (byte) bloco, pData);
