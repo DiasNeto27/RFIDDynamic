@@ -1,4 +1,4 @@
-package br.edu.fatecbauru.controllers;
+Ôªøpackage br.edu.fatecbauru.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import br.edu.fatecbauru.controllers.util.InfoUtils;
 import br.edu.fatecbauru.controllers.util.Resources;
 
 /**
- * Esta classe È onde È armazenado o cadastro definido pelo usu·rio, ela segue o
+ * Esta classe √© onde √© armazenado o cadastro definido pelo usu√°rio, ela segue o
  * pattern Singleton
  * 
  * @author Dias
@@ -62,12 +62,12 @@ public class Cadastro {
 	}
 	
 	/**
-	 * Esta funÁ„o adicionar· um campo no {@code ArrayList<Campo>} <i>campos</i>, 
-	 * esta funÁ„o substitui o valor caso o nome do campo h· exista na lista
+	 * Esta fun√ß√£o adicionar√° um campo no {@code ArrayList<Campo>} <i>campos</i>, 
+	 * esta fun√ß√£o substitui o valor caso o nome do campo h√° exista na lista
 	 * 
 	 * @param nome O nome do campo
 	 * @param valor O valor do campo
-	 * @param bloco O bloco no qual o valor do campo ser· gravado
+	 * @param bloco O bloco no qual o valor do campo ser√° gravado
 	 * 
 	 */
 	public void addCampo(String nome, Object valor, Integer bloco) {
@@ -119,7 +119,7 @@ public class Cadastro {
 		
 		System.out.println();
 		for (Campo campo: this.campos){
-			//recupera o bloco no qual a informaÁ„o est· armazenada
+			//recupera o bloco no qual a informa√ß√£o est√° armazenada
 			int bloco = campo.getBloco();
 			//lendo o que foi escrito
 			String dado = rfid.lerInformacao(campo.getBloco());
@@ -132,9 +132,9 @@ public class Cadastro {
 	public boolean persistirDadosRFID(RFID rfid) {
 
 	    rfid.redefineVariaveis();
-	    rfid.verificaCartao();
+	    rfid.verificaCartao(true);
 	    for (Campo campo: this.campos){
-	       //gera o bloco que ele ser· gravado
+	       //gera o bloco que ele ser√° gravado
 	       int bloco = rfid.getBlocoDisponivel();
 	       campo.setBloco(bloco);
 	     

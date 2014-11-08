@@ -1,10 +1,10 @@
-package br.edu.fatecbauru.controllers.bridge;
+﻿package br.edu.fatecbauru.controllers.bridge;
 
 
 import com.sun.jna.Library;
 
 /**
- * Esta interface faz a ponte entre os m�todos existentes na DLL <i>MasterRD.dll</i> e o <i>Java</i>
+ * Esta interface faz a ponte entre os métodos existentes na DLL <i>MasterRD.dll</i> e o <i>Java</i>
  * @author Dias
  *
  */

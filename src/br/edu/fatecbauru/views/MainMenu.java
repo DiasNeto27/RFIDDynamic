@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+
+
 import br.edu.fatecbauru.controllers.Cadastro;
 import br.edu.fatecbauru.controllers.Campo;
 import br.edu.fatecbauru.controllers.RFID;
@@ -14,10 +16,10 @@ import br.edu.fatecbauru.controllers.util.InfoUtils;
 import br.edu.fatecbauru.controllers.util.Resources;
 
 public class MainMenu {
-	/** inicialia a classe Scanner para receber entradas do usu·rio */
+	/** inicialia a classe Scanner para receber entradas do usu√°rio */
 	Scanner userInput = new Scanner(System.in);
 
-	/** Definindo n˙meros correspodentes as opÁıes de menu */
+	/** Definindo n√∫meros correspodentes as op√ß√µes de menu */
 	final int MENU_CONECTAR = 1;
 	final int MENU_DEFINIR_CADASTRO = 2;
 	final int MENU_CADASTRAR = 3;
@@ -26,8 +28,8 @@ public class MainMenu {
 	final int MENU_SAIR = 6;
 
 	/**
-	 * Inicializando contÈudo do menu em um {@code TreeMap} para garantir a
-	 * ordem correta (crescente) das opÁıes
+	 * Inicializando conte√∫do do menu em um {@code TreeMap} para garantir a
+	 * ordem correta (crescente) das op√ß√µes
 	 */
 	Map<Integer, String> menu = new TreeMap<Integer, String>() {
 		{
@@ -41,7 +43,7 @@ public class MainMenu {
 	};
 
 	/**
-	 * Mostra o menu na tela de forma j· formatada em ordem crescente das opÁıes
+	 * Mostra o menu na tela de forma j√° formatada em ordem crescente das op√ß√µes
 	 */
 	public void printMenu() {
 		Iterator<Map.Entry<Integer, String>> iterator = menu.entrySet().iterator();
@@ -75,9 +77,9 @@ public class MainMenu {
 		
 	    int campos = 0;
 	    
-		while (true) { //controla o numero de campos que ser„o cadastros pelo usu·rio
+		while (true) { //controla o numero de campos que serÔøΩo cadastros pelo usuÔøΩrio
 			Resources.clearScreen();
-			System.out.println("Digite o nome do campo ou 0 para prÛximo passo ");
+			System.out.println("Digite o nome do campo ou 0 para pr√≥ximo passo ");
 			String nomeCampo = userInput.nextLine();
 			if (nomeCampo.length() <= 0) {
 				System.out.println("Entrada vazia digite novamente.");
@@ -85,7 +87,7 @@ public class MainMenu {
 			}
 			
 			if (nomeCampo.equalsIgnoreCase("0")){
-				System.out.println("Processo finalizado pelo usu·rio");
+				System.out.println("Processo finalizado pelo usu√°rio");
 				break;				
 			}
 
@@ -93,13 +95,13 @@ public class MainMenu {
 			campos++;
 			
 			if (campos == RFID.MAX_CAMPOS){
-				System.out.println("O n˙mero m·ximo de campos foi atingido");
+				System.out.println("O n√∫mero m√°ximo de campos foi atingido");
 				break;
 			}
 
 		}
 		
-		System.out.println("Cadastro definido com Íxito");
+		System.out.println("Cadastro definido com √™xito");
 	}
 	
 	
@@ -108,7 +110,7 @@ public class MainMenu {
 
 		while (iterator.hasNext()) {
 			Campo campo = iterator.next();
-			System.out.println("Digite o contÈudo do campo " + campo.getNome() + ":");
+			System.out.println("Digite o conte√∫do do campo " + campo.getNome() + ":");
 			String valor = userInput.next(); userInput.nextLine();
 			Cadastro.getInstance().addCampo(campo.getNome(), valor);
 		}
@@ -119,10 +121,39 @@ public class MainMenu {
 			
 	}
 	
+	public boolean carregarCartao(Double valor){
+		//por padr√£o vamos usar o bloco 4
+		rfid.verificaCartao(true);
+		rfid.autenticar(4);
+		return rfid.gravarInformacao(valor.toString(), 4) == 0;
+		
+	}
+	
+	public boolean cobraCartao(Double valor){
+		rfid.autenticar(4);
+		Double credito = Double.parseDouble(rfid.lerInformacao(4));
+	    if (credito >= valor){
+	    	rfid.beep(30);
+	    	Double creditoAnterior = credito;
+	    	credito -= valor;
+	    	rfid.gravarInformacao(credito.toString(), 4);
+	    	System.out.println("Cr√©dito anterior: R$" +  Double.toString(creditoAnterior));
+	    	System.out.println("Cr√©dito atual: R$" + Double.toString(credito));
+	    	System.out.println("Custo passagem: R$" + Double.toString(valor));
+	    	return true;
+	    }else{
+	    	rfid.beep(15);
+	    	rfid.beep(15);
+	    	System.err.println("Saldo insuficiente");
+	    	return false;
+	    }
+		
+	}
+	
 	public void lerDados(){
 	
 		rfid.redefineVariaveis();
-		rfid.verificaCartao();
+		rfid.verificaCartao(true);
 	   Cadastro.getInstance().lerDadosRFID(rfid);
 	   rfid.beep(30);
 	   
@@ -135,24 +166,60 @@ public class MainMenu {
 		System.out.println("Cordenadores: " + InfoUtils.getCordinators());
 	}
 
+	
+	public void aguardar(Integer segundos){
+		try {
+			Thread.sleep(segundos * 1000);
+		} catch (InterruptedException e) { 
+			e.printStackTrace();
+		}
+	}
 	public MainMenu() {
-			System.out.println(".:::. " + InfoUtils.getProjectName() + " vers„o: " + InfoUtils.getVersion() + ".:::.");
-			System.out.println("Nosso teste de integraÁ„o dever· gravar campos din‚micos no RFID que escolhermos e mostra-lo na tela. Seguiremos os passos: ");
-			System.out.println("Passo 1: Vamos testar a conex„o com o equipamento");
+			System.out.println(".:::. " + InfoUtils.getProjectName() + " vers√£o: " + InfoUtils.getVersion() + ".:::.");
+			System.out.println("Nosso teste de integra√ß√£o dever√° gravar campos din√¢micos no RFID que escolhermos e mostra-lo na tela. Seguiremos os passos: ");
+			System.out.println("Passo 1: Vamos testar a conex√£o com o equipamento");
 			if (!conectar()){
 				System.err.println("Falha ao tentar conectar com o equipamento");
 				return;
 			}
-			System.out.println("Passo 2: Agora vamos definir os campos que desejamos salvar no cart„o");
-			definirCadastro();	
-			System.out.println("Passo 3: Preencha os dados conforme È pedido");
+			System.out.println("Passo 2: Agora vamos definir os campos que desejamos salvar no cart√£o");
+			definirCadastro();
+			System.out.println("Passo 3: Preencha os dados conforme √© pedido");
 			cadastrar();
-			System.out.println("Passo 4: Agora que salvamos no cart„o, vamos ler o contÈudo e mostra-lo");
-			lerDados();			
+			System.out.println("Passo 4: Agora que salvamos no cart√£o, vamos ler o contÔøΩudo e mostra-lo");
+			lerDados();
 			System.out.println("---------------------------------");
-			System.out.println("Teste de integraÁ„o finalizado");					
-			sobre();
+			System.out.println("Teste de integra√ß√£o finalizado");
 			
+			
+			System.out.println("Podemos agora simular uma catraca eletr√¥nica de um √¥nibus");
+			System.out.println("Vou carregar R$ 10,00 no seu cart√£o");
+			if (!carregarCartao(10.00)){
+				System.err.println("N√£o foi possivel carregar cart√£o");
+				return;
+			}else{
+				System.out.println("Seu cart√£o foi carregado com R$ 10,00.");
+				System.out.println("Remove o cart√£o do leitor");
+				aguardar(7);
+			}
+			
+			System.out.println("A passagem custa R$ 2,60");
+			
+			System.out.println("---------- CATRACA ELETR√îNICA ATIVA ----------");
+			while(true){
+				if (rfid.verificaCartao(false)){
+					if (!cobraCartao(2.60)){
+						break;
+					}
+					aguardar(5);
+				}				
+			}
+			
+			
+			sobre();
+
+
+				
 			System.exit(0);
 
 	}

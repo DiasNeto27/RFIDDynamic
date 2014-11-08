@@ -1,22 +1,22 @@
-package br.edu.fatecbauru.controllers.util;
+Ôªøpackage br.edu.fatecbauru.controllers.util;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Esta classe contÈm informaÁıes uteis para toda a aplicaÁ„o, como o nome de todos os contribuintes,
- * vers„o da aplicaÁ„o, nome do projeto e etc.
+ * Esta classe cont√©m informa√ß√µes uteis para toda a aplica√ß√£o, como o nome de todos os contribuintes,
+ * vers√£o da aplica√ß√£o, nome do projeto e etc.
  * @author Dias
  *
  */
 public class InfoUtils {		
 	/** Inicializa o nome do projeto */
 	private static String projectName = "RFID Dynamic";
-	/** Inicializa a informaÁ„o da vers„o do projeto */
+	/** Inicializa a informa√ß√£o da vers√£o do projeto */
 	private static String version = "1.0";
 	/** Inicializa o nome de cada colaborador do projeto */
-	private static String authors[] = {"JosÈ Dias Neto", "Juliane Oliveira", "Felipe da Cunha", "Juliano Torres"};
+	private static String authors[] = {"Jos√© Dias Neto", "Juliane Oliveira", "Felipe da Cunha", "Juliano Torres"};
 	/** Inicializa o nome de cada coordenador do projeto*/
 	private static String coordinators[] = {"Gustavo Bruschi", "Luiz Alexandre"};
 	
@@ -25,8 +25,8 @@ public class InfoUtils {
 	public final static int LED_VERMELHO = 2;
 	
 		
-	/** Inicializa um {@code TreeMap} contendo o vÌnculo entre os cÛdigos de erros e a sua
-	 * representaÁ„o de forma escrita */
+	/** Inicializa um {@code TreeMap} contendo o v√≠nculo entre os c√≥digos de erros e a sua
+	 * representa√ß√£o de forma escrita */
 	private static Map<Integer,String> errors = new TreeMap<Integer, String>(){
 		{
 			put(1, "Baud rate error");
@@ -46,10 +46,10 @@ public class InfoUtils {
 	};
 	
 	/**
-	 * Retorna a descriÁ„o do erro de acordo com o cÛdigo que foi passado
+	 * Retorna a descri√ß√£o do erro de acordo com o c√≥digo que foi passado
 	 * 
-	 * @param errorCode O cÛdigo do erro 
-	 * @return retorna uma {@code String} que representa a descriÁ„o do erro de acordo com o cÛdigo informado 
+	 * @param errorCode O c√≥digo do erro 
+	 * @return retorna uma {@code String} que representa a descri√ß√£o do erro de acordo com o c√≥digo informado 
 	 */
 	public static String getErrorMessage(int errorCode){
 		return errors.get(errorCode);
@@ -57,23 +57,23 @@ public class InfoUtils {
 	
 	/**
 	 * Retorna o nome atual do projeto
-	 * @return retorna uma {@code String} com a representaÁ„o do nome do projeto
+	 * @return retorna uma {@code String} com a representa√ß√£o do nome do projeto
 	 */
 	public static String getProjectName(){
 		return projectName;
 	}
 	
 	/**
-	 * Retorna a vers„o atual do projeto
+	 * Retorna a vers√£o atual do projeto
 	 * 
-	 * @return retorna uma {@code String} com a representaÁ„o da vers„o do projeto
+	 * @return retorna uma {@code String} com a representa√ß√£o da vers√£o do projeto
 	 */
 	public static String getVersion(){
 		return version;
 	}
 	
 	/**
-	 * Retorna os autores do projeto de forma j· formatada 
+	 * Retorna os autores do projeto de forma j√° formatada 
 	 * pronto para imprimir na tela
 	 * 
 	 * @return retorna uma {@code String} contendo o nome de todos os autores do projeto 
@@ -83,7 +83,7 @@ public class InfoUtils {
 	}
 	
 	/**
-	 * Retorna os coordenadores do projeto de forma j· formatada
+	 * Retorna os coordenadores do projeto de forma j√° formatada
 	 * pronto para imprimir na tela
 	 * 
 	 * @return retorna uma {@code String} contendo o nome de todos os coordenadores do projeto
@@ -93,11 +93,11 @@ public class InfoUtils {
 	}
 	
 	/**
-	 * Retorna de forma formatada com conectivos "," e "e" todos os nomes em ordem alfabÈtica
-	 * de modo que estejam prontos para ser apresentado ao usu·rio
+	 * Retorna de forma formatada com conectivos "," e "e" todos os nomes em ordem alfab√©tica
+	 * de modo que estejam prontos para ser apresentado ao usu√°rio
 	 * 
 	 * @param names Um array de strings contendo o nome de todos no qual se deseja formatar 
-	 * @return retorna uma {@code String} contendo todos os nomes recebidos em ordem alfabÈtica
+	 * @return retorna uma {@code String} contendo todos os nomes recebidos em ordem alfab√©tica
 	 */
 	public static String getFormattedNames(String[] names){
 		 String result = "";		

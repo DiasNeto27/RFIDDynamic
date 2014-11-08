@@ -1,4 +1,4 @@
-package br.edu.fatecbauru;
+﻿package br.edu.fatecbauru;
 
 import br.edu.fatecbauru.views.MainMenu;
 

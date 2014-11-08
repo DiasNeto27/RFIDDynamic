@@ -1,4 +1,4 @@
-package br.edu.fatecbauru.controllers;
+Ôªøpackage br.edu.fatecbauru.controllers;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -30,7 +30,7 @@ public class RFID {
 	int blocoAtual= 1;
 	
 	/**
-	 *  Este construtor faz a inclus„o do caminho da DLL no library path do Java e a carrega em memÛria
+	 *  Este construtor faz a inclus√£o do caminho da DLL no library path do Java e a carrega em mem√≥ria
 	 */
 	public RFID(){
 		String path = System.getProperty("user.dir");		
@@ -42,8 +42,8 @@ public class RFID {
 	}
 	
 	/**
-	 * Este mÈtodo retorna o prÛximo bloco disponÌvel
-	 * @return Retorna o n˙mero referente ao bloco disponivel
+	 * Este m√©todo retorna o pr√≥ximo bloco dispon√≠vel
+	 * @return Retorna o n√∫mero referente ao bloco disponivel
 	 */
 	public int getBlocoDisponivel(){
 		while(isBlocoChave(++blocoAtual));		
@@ -52,13 +52,13 @@ public class RFID {
 	
 
 	/**
-	 * Este mÈtodo verifica se o {@code bloco} n„o È um bloco onde armazena-se a chave do setor
-	 * a fÛrmula para saber qual È o bloco chave do setor em cartıes s50 se d· pela equaÁ„o x=s*4+3
-	 * onde <i>s</i> È o setor e <i>x</i> o bloco encontrado.
-	 * Para sabermos de qual setor È o {@code bloco} È sÛ dividirmos o n˙mero do bloco por 4
-	 * j· que cada setor tem 4 blocos. 
-	 * @param bloco O n˙mero que identifica o bloco
-	 * @return {@code true} se {@code bloco} for chave do setor, caso contr·rio, retorna {@code false}
+	 * Este m√©todo verifica se o {@code bloco} n√£o √© um bloco onde armazena-se a chave do setor
+	 * a f√≥rmula para saber qual √© o bloco chave do setor em cart√µes s50 se d√° pela equa√ß√£o x=s*4+3
+	 * onde <i>s</i> √© o setor e <i>x</i> o bloco encontrado.
+	 * Para sabermos de qual setor √© o {@code bloco} √© s√≥ dividirmos o n√∫mero do bloco por 4
+	 * j√° que cada setor tem 4 blocos. 
+	 * @param bloco O n√∫mero que identifica o bloco
+	 * @return {@code true} se {@code bloco} for chave do setor, caso contr√°rio, retorna {@code false}
 	 */
 	public boolean isBlocoChave(int bloco){
 		int setor = bloco / 4;		 
@@ -67,13 +67,13 @@ public class RFID {
 
 	
 	/**
-	 * Este mÈtodo tenta fazer a conex„o com o equipamento RFID testando as portas de 1 a 9 
-	 * os <i>bauds</i> existentes s„o:
+	 * Este m√©todo tenta fazer a conex√£o com o equipamento RFID testando as portas de 1 a 9 
+	 * os <i>bauds</i> existentes s√£o:
 	 * <i>9600</i>
 	 *  <i>19200</i>
 	 *  <i>57600</i>
-	 *  <i>115200</i> - indicado conexıes USB (default)
-	 * @return retorna a porta no qual foi conectado o equipamento, caso contr·rio retornar· -1
+	 *  <i>115200</i> - indicado conex√µes USB (default)
+	 * @return retorna a porta no qual foi conectado o equipamento, caso contr√°rio retornar√° -1
 	 */
 	public int conectar() throws Exception {			
 		int baud = 115200; //default
@@ -95,7 +95,7 @@ public class RFID {
 	}
 	
 	/**
-	 * Este mÈtodo far· uma requisiÁ„o inicial ao cart„o
+	 * Este m√©todo far√° uma requisi√ß√£o inicial ao cart√£o
 	 * 
 	 * @return
 	 */
@@ -117,8 +117,8 @@ public class RFID {
 	}
 	
 	/**
-	 * O cart„o vai ficar no estado de ativo depois de receber este comando
-	 * @return retorna o resultado 0 se tiver Íxito caso contr·rio retornar· diferente de 0
+	 * O cart√£o vai ficar no estado de ativo depois de receber este comando
+	 * @return retorna o resultado 0 se tiver √™xito caso contr√°rio retornar√° diferente de 0
 	 */
 	public int selecionar(){		
 		int retorno = dll.rf_select(icdev, pSnr, (byte) 4, plen);		
@@ -143,23 +143,29 @@ public class RFID {
 		return dll.rf_beep(icdev,(byte)  mili);
 	}
 	
-	public boolean verificaCartao(){		
-		mudarLed(InfoUtils.LED_VERMELHO);	
-		beep(30);
-		System.out.println("Coloque o cart„o proximo do leitor e pressione [ENTER] para continuar");		
-		Scanner s = new Scanner(System.in);		
-		s.nextLine();
-		
+	public boolean verificaCartao(boolean aguardaTeclaUsuario){		
+		mudarLed(InfoUtils.LED_VERMELHO);
+	
+		if (aguardaTeclaUsuario) {		
+			beep(30);
+			System.out.println("Coloque o cart√£o proximo do leitor e pressione [ENTER] para continuar");
+			Scanner s = new Scanner(System.in);
+			s.nextLine();
+		}
+
 		request();		
 		antiCollision();		
 		int result  = selecionar();		
 		mudarLed(InfoUtils.LED_AZUL);
 		if (result == 0){
-			
-			System.out.println("Cart„o detectado com Íxito");
+			if (aguardaTeclaUsuario){
+			System.out.println("Cart√£o detectado com √™xito");
+			}
 			return true;
 		}else{
-			System.out.println("N„o conseguiu identificar o cart„o");
+			if (aguardaTeclaUsuario){
+			System.out.println("N√£o conseguiu identificar o cart√£o");
+			}
 			return false;
 		}
 		
@@ -180,8 +186,8 @@ public class RFID {
 		//antes devo autenticar
 		int result = autenticar(bloco);
 		if (result != 0){
-			System.err.println("Problema na autenticaÁ„o: " + InfoUtils.getErrorMessage(result));
-			return "Bloco " + bloco + " n„o autenticado";
+			System.err.println("Problema na autentica√ß√£o: " + InfoUtils.getErrorMessage(result));
+			return "Bloco " + bloco + " n√£o autenticado";
 		}
 		
 		
@@ -190,7 +196,7 @@ public class RFID {
 	
 		dll.rf_M1_read(icdev, (byte) bloco, pData, pDataLen);
 		
-		//converte conte˙do
+		//converte conte√∫do
 		
 		String hexConteudo = "";
 		
@@ -225,12 +231,12 @@ public class RFID {
 		//antes devo autenticar
 		int result = autenticar(bloco); 
 		if (result != 0){
-			System.err.println("Problema na autenticaÁ„o: " + InfoUtils.getErrorMessage(result));
+			System.err.println("Problema na autentica√ß√£o: " + InfoUtils.getErrorMessage(result));
 			return result;
 		}
 		
 		
-		//escrevendo a string no cart„o
+		//escrevendo a string no cart√£o
 		return dll.rf_M1_write(icdev, (byte) bloco, pData);
 	
 	}

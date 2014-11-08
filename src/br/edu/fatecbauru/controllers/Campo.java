@@ -1,4 +1,4 @@
-package br.edu.fatecbauru.controllers;
+﻿package br.edu.fatecbauru.controllers;
 
 public class Campo {
    private String nome;
