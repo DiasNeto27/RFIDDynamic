@@ -9,23 +9,26 @@ import java.util.TreeMap;
 
 
 
+
+
+
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
+
 import br.edu.fatecbauru.controllers.Cadastro;
 import br.edu.fatecbauru.controllers.Campo;
 import br.edu.fatecbauru.controllers.RFID;
 import br.edu.fatecbauru.controllers.util.InfoUtils;
-import br.edu.fatecbauru.controllers.util.Resources;
+import br.edu.fatecbauru.views.util.Resources;
 
 public class MainMenu {
 	/** inicialia a classe Scanner para receber entradas do usuário */
 	Scanner userInput = new Scanner(System.in);
 
 	/** Definindo números correspodentes as opções de menu */
-	final int MENU_CONECTAR = 1;
-	final int MENU_DEFINIR_CADASTRO = 2;
-	final int MENU_CADASTRAR = 3;
-	final int MENU_LER_DADOS = 4;
-	final int MENU_SOBRE = 5;
-	final int MENU_SAIR = 6;
+	final int MENU_TESTE_INTEGRACAO = 1;
+	final int MENU_SIMULADOR_CATRACA_ELETRONICA = 2;
+	final int MENU_SOBRE = 3;
+	final int MENU_SAIR = 4;
 
 	/**
 	 * Inicializando conteúdo do menu em um {@code TreeMap} para garantir a
@@ -33,10 +36,8 @@ public class MainMenu {
 	 */
 	Map<Integer, String> menu = new TreeMap<Integer, String>() {
 		{
-			put(MENU_CONECTAR, "Conectar-se ao RFID");
-			put(MENU_DEFINIR_CADASTRO, "Definir cadastro");
-			put(MENU_CADASTRAR, "Cadastrar cadastro definido");
-			put(MENU_LER_DADOS, "Ler cadastro definido");
+			put(MENU_TESTE_INTEGRACAO, "Teste de integração");
+			put(MENU_SIMULADOR_CATRACA_ELETRONICA, "Simulador de catraca eletrônica");
 			put(MENU_SOBRE, "Sobre");
 			put(MENU_SAIR, "Sair");
 		}
@@ -64,6 +65,7 @@ public class MainMenu {
 			return true;
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
+			System.err.println("Desconecte e reconecte o equipamento e tente novamente...");
 			return false;
 		}
 	}
@@ -122,9 +124,10 @@ public class MainMenu {
 	}
 	
 	public boolean carregarCartao(Double valor){
-		//por padrão vamos usar o bloco 4
+		//por padrão vamos usar o bloco 4	
 		rfid.verificaCartao(true);
 		rfid.autenticar(4);
+		rfid.beep(30);
 		return rfid.gravarInformacao(valor.toString(), 4) == 0;
 		
 	}
@@ -136,10 +139,13 @@ public class MainMenu {
 	    	rfid.beep(30);
 	    	Double creditoAnterior = credito;
 	    	credito -= valor;
-	    	rfid.gravarInformacao(credito.toString(), 4);
-	    	System.out.println("Crédito anterior: R$" +  Double.toString(creditoAnterior));
-	    	System.out.println("Crédito atual: R$" + Double.toString(credito));
-	    	System.out.println("Custo passagem: R$" + Double.toString(valor));
+	    	rfid.gravarInformacao(credito.toString().length() > 4 ?credito.toString().substring(0, 4) : credito.toString() , 4);
+	    	System.out.println("DEMONSTRATIVO DE SALDO");
+	    	System.out.println("----------------------------------------");
+	    	System.out.println("Crédito anterior: " + Resources.DINHEIRO_REAL.format(creditoAnterior));
+	    	System.out.println("Crédito atual: " + Resources.DINHEIRO_REAL.format(credito));
+	    	System.out.println("Custo passagem: " + Resources.DINHEIRO_REAL.format(valor));
+	    	System.out.println("----------------------------------------");
 	    	return true;
 	    }else{
 	    	rfid.beep(15);
@@ -167,60 +173,89 @@ public class MainMenu {
 	}
 
 	
-	public void aguardar(Integer segundos){
-		try {
-			Thread.sleep(segundos * 1000);
-		} catch (InterruptedException e) { 
-			e.printStackTrace();
-		}
+	
+	
+	public void testeIntegracao(){
+		System.out.println("Nosso teste de integração deverá gravar campos dinâmicos no RFID que escolhermos e mostra-lo na tela. Seguiremos os passos: ");		
+		System.out.println("Passo 1: Vamos definir os campos que desejamos salvar no cartão");
+		definirCadastro();
+		System.out.println("Passo 2: Preencha os dados conforme é pedido");
+		cadastrar();
+		System.out.println("Passo 3: Agora que salvamos no cartão, vamos ler o conteúdo e mostra-lo");
+		lerDados();
+		System.out.println("---------------------------------");
+		System.out.println("Teste de integração finalizado");
+		sobre();
+		
 	}
+	
+	public void catracaEletronica(){
+		final Double PRECO_PASSAGEM = 2.60;
+		System.out.println("Essa é uma simulação do funcionamento de uma catraca eletrônica de um ônibus");
+		System.out.println("A passagem custa " + Resources.DINHEIRO_REAL.format(PRECO_PASSAGEM) + ".");
+		Double valor = 0.00;
+		while (true){
+			System.out.println("Digite o valor que deseja carregar no seu cartão de ônibus: ");
+			try{
+				valor = Double.parseDouble(userInput.nextLine());
+				break;
+			}catch (Exception err){
+				System.err.println("Valor inválido.");
+			}
+		}
+	
+		if (!carregarCartao(valor)){
+			System.err.println("Não foi possivel carregar cartão");
+			return;
+		}else{
+			System.out.println("Seu cartão foi carregado com " + Resources.DINHEIRO_REAL.format(valor) + ".");
+			System.out.println("Remova o cartão do leitor");
+			Resources.aguardar(7);
+		}
+	
+		
+		System.out.println("---------- CATRACA ELETRÔNICA ATIVA ----------");
+		while(true){
+			if (rfid.verificaCartao(false)){
+				if (!cobraCartao(PRECO_PASSAGEM)){
+					break;
+				}
+				Resources.aguardar(5);
+			}				
+		}
+		
+		System.out.println("Simulador finalizado");
+		sobre();
+	}
+	
+	
 	public MainMenu() {
+			
 			System.out.println(".:::. " + InfoUtils.getProjectName() + " versão: " + InfoUtils.getVersion() + ".:::.");
-			System.out.println("Nosso teste de integração deverá gravar campos dinâmicos no RFID que escolhermos e mostra-lo na tela. Seguiremos os passos: ");
-			System.out.println("Passo 1: Vamos testar a conexão com o equipamento");
+			System.out.println("Bem-vindo. Vamos testar a conexão com o equipamento");
 			if (!conectar()){
 				System.err.println("Falha ao tentar conectar com o equipamento");
 				return;
 			}
-			System.out.println("Passo 2: Agora vamos definir os campos que desejamos salvar no cartão");
-			definirCadastro();
-			System.out.println("Passo 3: Preencha os dados conforme é pedido");
-			cadastrar();
-			System.out.println("Passo 4: Agora que salvamos no cartão, vamos ler o cont�udo e mostra-lo");
-			lerDados();
-			System.out.println("---------------------------------");
-			System.out.println("Teste de integração finalizado");
-			
-			
-			System.out.println("Podemos agora simular uma catraca eletrônica de um ônibus");
-			System.out.println("Vou carregar R$ 10,00 no seu cartão");
-			if (!carregarCartao(10.00)){
-				System.err.println("Não foi possivel carregar cartão");
-				return;
-			}else{
-				System.out.println("Seu cartão foi carregado com R$ 10,00.");
-				System.out.println("Remove o cartão do leitor");
-				aguardar(7);
+			while (true){
+					printMenu();
+					Integer opcao = userInput.nextInt(); 
+					userInput.nextLine();
+					switch (opcao){
+					case MENU_TESTE_INTEGRACAO: testeIntegracao(); break;
+					case MENU_SIMULADOR_CATRACA_ELETRONICA: catracaEletronica(); break;
+					case MENU_SOBRE: sobre(); break;
+					case MENU_SAIR: System.exit(0);
+					default: System.err.println("Opção inválida");
+
+				}
+				
 			}
-			
-			System.out.println("A passagem custa R$ 2,60");
-			
-			System.out.println("---------- CATRACA ELETRÔNICA ATIVA ----------");
-			while(true){
-				if (rfid.verificaCartao(false)){
-					if (!cobraCartao(2.60)){
-						break;
-					}
-					aguardar(5);
-				}				
-			}
-			
-			
-			sobre();
+	
 
 
 				
-			System.exit(0);
+
 
 	}
 }

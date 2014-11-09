@@ -6,13 +6,16 @@ import java.util.Scanner;
 
 
 
+
+
 import br.edu.fatecbauru.controllers.bridge.MasterRDImpl;
 import br.edu.fatecbauru.controllers.util.InfoUtils;
-import br.edu.fatecbauru.controllers.util.Resources;
 
 
 
 
+
+import br.edu.fatecbauru.views.util.Resources;
 
 import com.sun.jna.Native;
 

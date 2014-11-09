@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.crypto.spec.GCMParameterSpec;
 
 import br.edu.fatecbauru.controllers.util.InfoUtils;
-import br.edu.fatecbauru.controllers.util.Resources;
+import br.edu.fatecbauru.views.util.Resources;
 
 /**
  * Esta classe é onde é armazenado o cadastro definido pelo usuário, ela segue o
