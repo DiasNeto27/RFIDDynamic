@@ -198,20 +198,25 @@ public class MainMenu {
 			System.out.println("Digite o valor que deseja carregar no seu cartão de ônibus: ");
 			try{
 				valor = Double.parseDouble(userInput.nextLine());
-				break;
+
+				if (!carregarCartao(valor)){
+					System.err.println("Não foi possivel carregar cartão. Tente novamente.");					
+				}else{
+					System.out.println("Seu cartão foi carregado com " + Resources.DINHEIRO_REAL.format(valor) + ".");				
+				}
+				
+				System.out.println("Deseja carregar mais algum outro cartão? " + Resources.getOpcoesFormatadas());
+				String escolha = userInput.nextLine();
+				if (!escolha.equalsIgnoreCase("S")){
+					break;
+				}
 			}catch (Exception err){
 				System.err.println("Valor inválido.");
 			}
 		}
-	
-		if (!carregarCartao(valor)){
-			System.err.println("Não foi possivel carregar cartão");
-			return;
-		}else{
-			System.out.println("Seu cartão foi carregado com " + Resources.DINHEIRO_REAL.format(valor) + ".");
-			System.out.println("Remova o cartão do leitor");
-			Resources.aguardar(7);
-		}
+
+		System.out.println("Remova o cartão do leitor");
+		Resources.aguardar(7);
 	
 		
 		System.out.println("---------- CATRACA ELETRÔNICA ATIVA ----------");
